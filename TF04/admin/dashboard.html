@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - TechStore</title>
+  <link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+  <header>
+    <h1>⚙️ Painel Administrativo</h1>
+    <a href="/">← Voltar à Loja</a>
+  </header>
+
+  <main>
+    <section class="metrics">
+      <h2>Status das Instâncias Backend</h2>
+      <div id="instances" class="grid">Carregando...</div>
+    </section>
+
+    <section class="metrics">
+      <h2>Teste de Load Balancing</h2>
+      <button class="btn" onclick="testLoadBalancing()">Disparar 6 Requisições</button>
+      <div id="lb-results" class="results"></div>
+    </section>
+
+    <section class="metrics">
+      <h2>Links Úteis</h2>
+      <ul>
+        <li><a href="/nginx-status" target="_blank">/nginx-status</a> — Métricas do Nginx</li>
+        <li><a href="/health" target="_blank">/health</a> — Health check global</li>
+        <li><a href="/api/info" target="_blank">/api/info</a> — Info da instância atual</li>
+        <li><a href="/api/status" target="_blank">/api/status</a> — Status da instância</li>
+      </ul>
+    </section>
+  </main>
+
+  <script>
+    async function loadInstances() {
+      const results = await Promise.allSettled([
+        fetch('/api/status').then(r => r.json()),
+        fetch('/api/info').then(r => r.json()),
+      ]);
+      const data = results[0].status === 'fulfilled' ? results[0].value : {};
+      document.getElementById('instances').innerHTML = `
+        <div class="card">
+          <h3>${data.instance_id || 'N/A'}</h3>
+          <p>Status: <span class="ok">✅ Online</span></p>
+          <p>Uptime: ${data.uptime || 0}s</p>
+          <p>Requisições: ${data.requests_served || 0}</p>
+        </div>
+      `;
+    }
+
+    async function testLoadBalancing() {
+      const div = document.getElementById('lb-results');
+      div.innerHTML = 'Executando...';
+      const promises = Array.from({length: 6}, () =>
+        fetch('/api/info').then(r => r.json()).then(d => d.instance_id)
+      );
+      const results = await Promise.all(promises);
+      const counts = results.reduce((acc, id) => { acc[id] = (acc[id] || 0) + 1; return acc; }, {});
+      div.innerHTML = '<h4>Distribuição:</h4>' +
+        Object.entries(counts).map(([k, v]) => `<p>${k}: ${v} requisições</p>`).join('');
+    }
+
+    loadInstances();
+    setInterval(loadInstances, 30000);
+  </script>
+</body>
+</html>

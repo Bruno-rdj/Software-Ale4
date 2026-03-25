@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carrinho - TechStore</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <h1>🛒 TechStore</h1>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/produtos.html">Produtos</a></li>
+        <li><a href="/carrinho.html">Carrinho</a></li>
+        <li><a href="/admin/">Admin</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Meu Carrinho</h2>
+    <div id="cart-content">
+      <p>Seu carrinho está vazio. <a href="/produtos.html">Ver produtos</a></p>
+    </div>
+    <div id="instance-info"></div>
+  </main>
+
+  <footer><p>TechStore &copy; 2026 - TF04 UniFAAT</p></footer>
+
+  <script>
+    fetch('/api/cart')
+      .then(r => r.json())
+      .then(d => {
+        document.getElementById('instance-info').innerHTML =
+          `<small>Instância: ${d.instance_id} | Total: R$ ${d.total.toFixed(2)}</small>`;
+      });
+  </script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TechStore - Loja Virtual</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <h1>🛒 TechStore</h1>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/produtos.html">Produtos</a></li>
+        <li><a href="/carrinho.html">Carrinho</a></li>
+        <li><a href="/admin/">Admin</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h2>Bem-vindo à TechStore</h2>
+      <p>Os melhores produtos de tecnologia com entrega rápida.</p>
+      <a href="/produtos.html" class="btn">Ver Produtos</a>
+    </section>
+
+    <section class="info-box">
+      <h3>Status do Sistema</h3>
+      <div id="api-info">Carregando...</div>
+    </section>
+  </main>
+
+  <footer><p>TechStore &copy; 2026 - TF04 UniFAAT</p></footer>
+
+  <script>
+    fetch('/api/info')
+      .then(r => r.json())
+      .then(d => {
+        document.getElementById('api-info').innerHTML =
+          `<p>✅ API Online | Instância: <strong>${d.instance_id}</strong> | Uptime: ${d.uptime_seconds}s</p>`;
+      })
+      .catch(() => {
+        document.getElementById('api-info').innerHTML = '<p>❌ API indisponível</p>';
+      });
+  </script>
+</body>
+</html>

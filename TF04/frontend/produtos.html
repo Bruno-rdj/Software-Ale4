@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Produtos - TechStore</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <h1>🛒 TechStore</h1>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/produtos.html">Produtos</a></li>
+        <li><a href="/carrinho.html">Carrinho</a></li>
+        <li><a href="/admin/">Admin</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Nossos Produtos</h2>
+    <p id="instance-badge"></p>
+    <div id="products" class="product-grid">Carregando produtos...</div>
+  </main>
+
+  <footer><p>TechStore &copy; 2026 - TF04 UniFAAT</p></footer>
+
+  <script>
+    fetch('/api/products')
+      .then(r => r.json())
+      .then(data => {
+        document.getElementById('instance-badge').innerHTML =
+          `Servido por: <strong>${data.instance_id}</strong>`;
+        const grid = document.getElementById('products');
+        grid.innerHTML = data.products.map(p => `
+          <div class="card">
+            <h3>${p.name}</h3>
+            <p class="price">R$ ${p.price.toFixed(2)}</p>
+            <p>Estoque: ${p.stock} unidades</p>
+            <button class="btn">Adicionar ao Carrinho</button>
+          </div>
+        `).join('');
+      })
+      .catch(() => {
+        document.getElementById('products').innerHTML = '<p>Erro ao carregar produtos.</p>';
+      });
+  </script>
+</body>
+</html>
