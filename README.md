@@ -45,7 +45,7 @@
 
 ### Execução
 ```bash
-git clone [URL_DO_SEU_REPO]
+git clone https://github.com/Bruno-rdj/Software-Ale4.git
 cd TF04
 
 # Gerar certificados SSL (Linux/Mac)
